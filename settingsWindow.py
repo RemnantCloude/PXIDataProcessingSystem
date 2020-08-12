@@ -4,6 +4,7 @@
 # @author  :Cloude Remnant
 # @date    :2020-08-06
 # @description:
+# TODO 关闭软件时保存设置
 
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QCheckBox, QTextEdit, QGridLayout, QLabel, QComboBox, QPushButton
@@ -38,10 +39,10 @@ class SettingsWindow(QWidget):
         self.__samplesPerChanTxt = QTextEdit()
         self.__samplesPerChanCob = QComboBox()
 
-        self.__maxValLab = QLabel("最大电压值")
+        self.__maxValLab = QLabel("采样最大值")
         self.__maxValTxt = QTextEdit()
 
-        self.__minValLab = QLabel("最小电压值")
+        self.__minValLab = QLabel("采样最小值")
         self.__minValTxt = QTextEdit()
 
         self.__couplingLab = QLabel("耦合方式")
@@ -146,10 +147,11 @@ class SettingsWindow(QWidget):
         self.setLayout(self.__layout)
         self.setMaximumSize(250, 400)
 
+    # TODO 具体的通道名随机型改变
     def scanChannels(self):
-        self.__channelsCob.addItem("Dev1/ai0")
-        self.__channelsCob.addItem("Dev1/ai1")
-        self.__channelsCob.addItem("Dev1/ai2")
+        self.__channelsCob.addItem("6132/ai0")
+        self.__channelsCob.addItem("6132/ai1")
+        self.__channelsCob.addItem("6132/ai2")
 
         # Settings.writeChannels()
         # pass# TODO 等待测试

@@ -12,6 +12,7 @@ from settingsWindow import SettingsWindow
 from resultWindow import ResultWindow
 from displayWindow import DisplayWindow
 from reviseWindow import ReviseWindow
+from settings import Settings
 
 class MeasureSystem(QWidget):
     def __init__(self):
@@ -29,6 +30,7 @@ class MeasureSystem(QWidget):
         self.__reviseWindow = ReviseWindow()
 
         self.__layout = QGridLayout()
+        self.__settings = Settings()
 
     def initSignalAndSlot(self):
         pass
