@@ -4,8 +4,8 @@
 # @author  :Cloude Remnant
 # @date    :2020-08-10
 # @description:
+# TODO 数据类型检查
 
-import os
 from PyQt5.QtCore import QSettings
 
 class Settings():
@@ -60,3 +60,51 @@ class Settings():
 
         self.__settings.endGroup()
         self.__settings.sync()
+
+    def readChannels(self):
+        return self.__channels
+
+    def readSampleFreq(self):
+        return self.__sampleFreq
+
+    def readSampleMode(self):
+        return self.__sampleMode
+
+    def readSamplesPerChan(self):
+        return self.__samplesPerChan
+
+    def readMaxVal(self):
+        return self.__maxVal
+
+    def readMinVal(self):
+        return self.__minVal
+
+    def readCoupling(self):
+        return self.__coupling
+
+    def readActiveEdge(self):
+        return self.__activeEdge
+
+    def writeChannels(self, channels):
+        self.__channels = channels
+
+    def writeSampleFreq(self, sampleFreq):
+        self.__sampleFreq = sampleFreq
+
+    def writeSampleMode(self, sampleMode):
+        self.__sampleMode = sampleMode
+
+    def writeSamplesPerChan(self, samplesPerChan):
+        self.__samplesPerChan = samplesPerChan
+
+    def writeMaxVal(self, maxVal):
+        self.__maxVal = maxVal
+
+    def writeMinVal(self, minVal):
+        self.__minVal = minVal
+
+    def writeCoupling(self, coupling):
+        self.__coupling = coupling
+
+    def writeActiveEdge(self, activeEdge):
+        self.__activeEdge = activeEdge
