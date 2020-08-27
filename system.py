@@ -31,7 +31,7 @@ class MeasureSystem(QWidget):
         self.__layout = QGridLayout()
 
     def initSignalAndSlot(self):
-        pass
+        self.__settingsWindow.signalReadPXIData.connect(self.__displayWindow.figure.setAxes)
 
     def setComponentsLayout(self):
         self.__layout.addWidget(self.__settingsWindow, 0, 0, 1, 1)
@@ -44,5 +44,5 @@ class MeasureSystem(QWidget):
         pass
 
     def initWindowStyle(self):
-        self.setMinimumSize(800, 750)
-        self.resize(800, 750)
+        self.setMinimumSize(1000, 800)
+        self.resize(1000, 800)

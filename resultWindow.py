@@ -74,4 +74,4 @@ class ResultWindow(QWidget):
         self.__layout.addWidget(self.__THDTxt, 6, 1, 1, 1)
 
         self.setLayout(self.__layout)
-        self.setMaximumSize(200, 200)
+        self.setMaximumSize(300, 200)

@@ -25,6 +25,7 @@ class Settings():
         self.__sampleFreq = 0
         self.__sampleMode = "持续采样"
         self.__samplesPerChan = 0
+        self.__samplesPerFile = 0
         self.__maxVal = 5.0
         self.__minVal = -5.0
         self.__coupling = "DC"
@@ -39,6 +40,7 @@ class Settings():
         self.__sampleFreq = self.__settings.value("sampleFreq")
         self.__sampleMode = self.__settings.value("sampleMode")
         self.__samplesPerChan = self.__settings.value("samplesPerChan")
+        self.__samplesPerFile = self.__settings.value("samplesPerFile")
         self.__maxVal = self.__settings.value("maxVal")
         self.__minVal = self.__settings.value("minVal")
         self.__coupling = self.__settings.value("coupling")
@@ -53,6 +55,7 @@ class Settings():
         self.__settings.setValue("sampleFreq", self.__sampleFreq)
         self.__settings.setValue("sampleMode", self.__sampleMode)
         self.__settings.setValue("samplesPerChan", self.__samplesPerChan)
+        self.__settings.setValue("samplesPerFile", self.__samplesPerFile)
         self.__settings.setValue("maxVal", self.__maxVal)
         self.__settings.setValue("minVal", self.__minVal)
         self.__settings.setValue("coupling", self.__coupling)
@@ -72,6 +75,9 @@ class Settings():
 
     def readSamplesPerChan(self):
         return self.__samplesPerChan
+
+    def readSamplesPerFile(self):
+        return self.__samplesPerFile
 
     def readMaxVal(self):
         return self.__maxVal
@@ -96,6 +102,9 @@ class Settings():
 
     def writeSamplesPerChan(self, samplesPerChan):
         self.__samplesPerChan = samplesPerChan
+
+    def writeSamplesPerFile(self, samplesPerFile):
+        self.__samplesPerChan = samplesPerFile
 
     def writeMaxVal(self, maxVal):
         self.__maxVal = maxVal

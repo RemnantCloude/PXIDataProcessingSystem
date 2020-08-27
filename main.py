@@ -6,7 +6,7 @@
 # @description:
 
 import sys
-from PyQt5.QtWidgets import QWidget, QApplication
+from PyQt5.QtWidgets import QApplication
 
 from system import MeasureSystem
 

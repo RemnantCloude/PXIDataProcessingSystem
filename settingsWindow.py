@@ -6,21 +6,26 @@
 # @description:
 # TODO 支持扫描通道
 
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QCheckBox, QTextEdit, QGridLayout, QLabel, QComboBox, QPushButton, QMessageBox
 from nidaqmx.stream_readers import AnalogSingleChannelReader
 from nidaqmx.constants import Edge, AcquisitionType, Coupling, VoltageUnits, TerminalConfiguration
-# import nidaqmx.system
+from datetime import datetime
+import numpy as np
 
 from settings import Settings
 
-coupling = {"AC": Coupling.AC, "DC": Coupling.DC, "GND": Coupling.GND}
-edge = {"上升沿": Edge.RISING, "下降沿": Edge.FALLING}
-acquisitiontype = {
-    "有限采样": AcquisitionType.FINITE,
-    "持续采样": AcquisitionType.CONTINUOUS}
-
 class SettingsWindow(QWidget):
+
+    coupling = {"AC": Coupling.AC, "DC": Coupling.DC, "GND": Coupling.GND}
+    edge = {"上升沿": Edge.RISING, "下降沿": Edge.FALLING}
+    acquisitiontype = {
+        "有限采样": AcquisitionType.FINITE,
+        "持续采样": AcquisitionType.CONTINUOUS}
+    
+    signalReadPXIData = pyqtSignal(np.ndarray, np.ndarray)
+
     def __init__(self):
         super().__init__()
         self.initComponents()
@@ -30,7 +35,6 @@ class SettingsWindow(QWidget):
 
         self.__settings = Settings()
         self.readSettings()
-        # self.scanChannels()
         self.sampleModeChange()
 
     def initComponents(self):
@@ -46,6 +50,9 @@ class SettingsWindow(QWidget):
 
         self.__samplesPerChanLab = QLabel()
         self.__samplesPerChanTxt = QTextEdit()
+
+        self.__samplesPerFileLab = QLabel("文件保存样本数")
+        self.__samplesPerFileTxt = QTextEdit()
 
         self.__maxValLab = QLabel("采样最大值")
         self.__maxValTxt = QTextEdit()
@@ -96,9 +103,13 @@ class SettingsWindow(QWidget):
         self.__writeSettingsBtn.clicked.connect(self.writeSettings)
 
     def setComponentsStyle(self):
+        self.__channelsTxt.setFixedSize(70, 25)
         self.__sampleFreqTxt.setFixedSize(60, 25)
         self.__sampleModeCob.setFixedSize(80, 25)
         self.__samplesPerChanTxt.setFixedSize(60, 25)
+        self.__samplesPerFileTxt.setFixedSize(60, 25)
+        self.__maxValTxt.setFixedSize(60, 25)
+        self.__minValTxt.setFixedSize(60, 25)
 
         self.__HCutoffFreqTxt.setFixedSize(60, 25)
         self.__HCutoffFreqCob.setFixedSize(45, 25)
@@ -129,39 +140,42 @@ class SettingsWindow(QWidget):
         self.__layout.addWidget(self.__samplesPerChanLab, 3, 0, 1, 1)
         self.__layout.addWidget(self.__samplesPerChanTxt, 3, 1, 1, 1)
 
-        self.__layout.addWidget(self.__maxValLab, 4, 0, 1, 1)
-        self.__layout.addWidget(self.__maxValTxt, 4, 1, 1, 1)
+        self.__layout.addWidget(self.__samplesPerFileLab, 4, 0, 1, 1)
+        self.__layout.addWidget(self.__samplesPerFileTxt, 4, 1, 1, 1)
 
-        self.__layout.addWidget(self.__minValLab, 5, 0, 1, 1)
-        self.__layout.addWidget(self.__minValTxt, 5, 1, 1, 1)
+        self.__layout.addWidget(self.__maxValLab, 5, 0, 1, 1)
+        self.__layout.addWidget(self.__maxValTxt, 5, 1, 1, 1)
 
-        self.__layout.addWidget(self.__couplingLab, 6, 0, 1, 1)
-        self.__layout.addWidget(self.__couplingCob, 6, 1, 1, 1)
+        self.__layout.addWidget(self.__minValLab, 6, 0, 1, 1)
+        self.__layout.addWidget(self.__minValTxt, 6, 1, 1, 1)
 
-        self.__layout.addWidget(self.__activeEdgeLab, 7, 0, 1, 1)
-        self.__layout.addWidget(self.__activeEdgeCob, 7, 1, 1, 1)
+        self.__layout.addWidget(self.__couplingLab, 7, 0, 1, 1)
+        self.__layout.addWidget(self.__couplingCob, 7, 1, 1, 1)
 
-        self.__layout.addWidget(self.__writeSettingsBtn, 8, 1, 1, 1)
+        self.__layout.addWidget(self.__activeEdgeLab, 8, 0, 1, 1)
+        self.__layout.addWidget(self.__activeEdgeCob, 8, 1, 1, 1)
 
-        self.__layout.addWidget(self.__LPFChk, 9, 0, 1, 1)
-        self.__layout.addWidget(self.__tenTimesMeasureChk, 9, 1, 1, 1)
+        self.__layout.addWidget(self.__writeSettingsBtn, 9, 1, 1, 1)
 
-        self.__layout.addWidget(self.__HCutoffFreqLab, 10, 0, 1, 1)
-        self.__layout.addWidget(self.__HCutoffFreqTxt, 10, 1, 1, 1)
-        self.__layout.addWidget(self.__HCutoffFreqCob, 10, 2, 1, 1)
+        self.__layout.addWidget(self.__LPFChk, 10, 0, 1, 1)
+        self.__layout.addWidget(self.__tenTimesMeasureChk, 10, 1, 1, 1)
 
-        self.__layout.addWidget(self.__LCutoffFreqLab, 11, 0, 1, 1)
-        self.__layout.addWidget(self.__LCutoffFreqTxt, 11, 1, 1, 1)
-        self.__layout.addWidget(self.__LCutoffFreqCob, 11, 2, 1, 1)
+        self.__layout.addWidget(self.__HCutoffFreqLab, 11, 0, 1, 1)
+        self.__layout.addWidget(self.__HCutoffFreqTxt, 11, 1, 1, 1)
+        self.__layout.addWidget(self.__HCutoffFreqCob, 11, 2, 1, 1)
 
-        self.__layout.addWidget(self.__deletePeriodsLab, 12, 0, 1, 1)
-        self.__layout.addWidget(self.__deletePeriodsTxt, 12, 1, 1, 1)
+        self.__layout.addWidget(self.__LCutoffFreqLab, 12, 0, 1, 1)
+        self.__layout.addWidget(self.__LCutoffFreqTxt, 12, 1, 1, 1)
+        self.__layout.addWidget(self.__LCutoffFreqCob, 12, 2, 1, 1)
 
-        self.__layout.addWidget(self.__zoomInTimesLab, 13, 0, 1, 1)
-        self.__layout.addWidget(self.__zoomInTimesTxt, 13, 1, 1, 1)
+        self.__layout.addWidget(self.__deletePeriodsLab, 13, 0, 1, 1)
+        self.__layout.addWidget(self.__deletePeriodsTxt, 13, 1, 1, 1)
+
+        self.__layout.addWidget(self.__zoomInTimesLab, 14, 0, 1, 1)
+        self.__layout.addWidget(self.__zoomInTimesTxt, 14, 1, 1, 1)
         
         self.setLayout(self.__layout)
-        self.setMaximumSize(250, 450)
+        self.setMaximumSize(300, 500)
 
     def readSettings(self):
         self.__channelsTxt.setText(self.__settings.readChannels())
@@ -170,6 +184,7 @@ class SettingsWindow(QWidget):
             if self.__sampleModeCob.itemText(i) == self.__settings.readSampleMode():
                 self.__sampleModeCob.setCurrentIndex(i)
         self.__samplesPerChanTxt.setText(self.__settings.readSamplesPerChan())
+        self.__samplesPerFileTxt.setText(self.__settings.readSamplesPerFile())
         self.__maxValTxt.setText(self.__settings.readMaxVal())
         self.__minValTxt.setText(self.__settings.readMinVal())
         for i in range(3):
@@ -185,6 +200,8 @@ class SettingsWindow(QWidget):
         self.__settings.writeSampleMode(self.__sampleModeCob.currentText())
         self.__settings.writeSamplesPerChan(
             self.__samplesPerChanTxt.toPlainText())
+        self.__settings.writeSamplesPerFile(
+            self.__samplesPerFileTxt.toPlainText())
         self.__settings.writeMaxVal(self.__maxValTxt.toPlainText())
         self.__settings.writeMinVal(self.__minValTxt.toPlainText())
         self.__settings.writeCoupling(self.__couplingCob.currentText())
@@ -223,6 +240,7 @@ class SettingsWindow(QWidget):
         else:
             self.__samplesPerChanLab.setText("缓冲区样本数")
 
+    # TODO 控件背景颜色设置
     def readPXIData(self):
         if self.__readPXIDataControlBtn.text() == "开始读取":
             self.__readPXIDataControlBtn.setText("停止读取")
@@ -246,6 +264,14 @@ class SettingsWindow(QWidget):
                 sample_mode = acquisitiontype[self.__settings.readSampleMode()],
                 samps_per_chan = self.__settings.readSamplesPerChan())
             # TODO 保存数据并显示
-            data = np.ndarray((1, samps_per_file), dtype=np.float64)
-            q = AnalogSingleChannelReader(task.in_stream).read_many_sample(
-                data, samps_per_file, timeout=nidaqmx.constants.WAIT_INFINITELY)
+            # TODO 管理员权限测试
+            data = np.ndarray((1, self.__settings.readSamplesPerFile()), dtype = np.float64)
+            AnalogSingleChannelReader(task.in_stream).read_many_sample(
+                data,
+                self.__settings.readSamplesPerFile(),
+                timeout=nidaqmx.constants.WAIT_INFINITELY)
+            # TODO 绘图
+            self.signalReadPXIData.emit(
+                np.arange(self.__settings.readSamplesPerFile()),
+                data)
+            np.savetxt("%s" % datetime.now().strftime("%Y-%m-%d %H:%M:%S"), data)

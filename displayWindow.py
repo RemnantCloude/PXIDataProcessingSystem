@@ -18,7 +18,7 @@ class DisplayWindow(QWidget):
         self.setThisLayout()
 
     def initComponents(self):
-        self.__figure = MyFigure()
+        self.figure = MyFigure()
 
         self.__layout = QGridLayout()
 
@@ -29,5 +29,5 @@ class DisplayWindow(QWidget):
         pass
 
     def setThisLayout(self):
-        self.__layout.addWidget(self.__figure, 0, 0, 1, 1)
+        self.__layout.addWidget(self.figure, 0, 0, 1, 1)
         self.setLayout(self.__layout)

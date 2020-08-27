@@ -15,9 +15,9 @@ class MyFigure(FigureCanvas):
     def __init__(self):
         self.fig = Figure(figsize=(5, 10), dpi=100)
         super().__init__(self.fig)
-        matplotlib.use("Qt5Agg")  # 声明使用QT5
+        matplotlib.use("Qt5Agg")
 
+    def setAxes(self, arrayX, arrayY):
         self.axes = self.fig.add_subplot(111)
-        t = np.arange(0.0, 3.0, 0.01)
-        s = np.sin(2 * np.pi * t)
-        self.axes.plot(t, s)
+        self.axes.plot(arrayX, arrayY)
+        self.draw()
